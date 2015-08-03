@@ -33,6 +33,8 @@ var initialize = function(capacity, initial) {
 LRUCache.prototype.cache = function(key, val) {
   // Define a property with the new key on the cache, along with a timestamp
   Object.defineProperty(this, key, {
+    enumerable: true,
+    configurable: true,
     get: function() {
       triggerUpdateOnKey.call(this, key);
       console.log("Cached state:",this.cachedValues);
@@ -57,7 +59,9 @@ LRUCache.prototype.cache = function(key, val) {
 }
 
 LRUCache.prototype.delete = function(key) {
-  console.log("Attempting to delete", key)
+  // The delete method should return a boolean based on whether it was able
+  // to find and delete the key requested
+  return delete this.cachedValues[key] && delete this[key];
 }
 
 // Private method that
@@ -100,3 +104,5 @@ console.log("A is",store.a);
 store.cache('b', 12);
 store.cache('c', 15);
 store.cache('d', 25);
+store.b
+console.log(store.a)
