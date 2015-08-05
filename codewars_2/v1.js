@@ -21,7 +21,7 @@ var initialize = function(capacity, initial) {
   // Set our internally tracked values
   this.sizeValue = 0;
   this.capacityValue = capacity;
-  this.cachedValues  = {};
+  this.cachedValues = [];
 
   // Iterate through our initial values, adding them to the cache.
   for (var prop in initial) {
@@ -41,9 +41,21 @@ LRUCache.prototype.cache = function(key, val) {
       return this.cachedValues[key].value;
     }.bind(this),
     set: function(newVal) {
-      // Update or create this key. Doesn't matter if it had a prior value
-      this.cachedValues[key] = {
-        value: newVal
+      var cache_index = this.indexOf(key)
+      // If this is a brand new item, create and push it
+      if ( cache_index === -1 ) {
+        console.log("Cached item never seen before. Adding")
+        this.cachedValues.push({
+          key:   key
+          value: newVal
+        });
+        console.log(this.cachedValues)
+      }
+      // If we already have this item in the cache, we just update it's value
+      else {
+        console.log("Cached item seen before. Updating")
+        this.cachedValues[cache_index].value = newVal;
+        console.log(this.cachedValues)
       }
 
       triggerUpdateOnKey.call(this, key);
@@ -64,19 +76,30 @@ LRUCache.prototype.delete = function(key) {
   return delete this.cachedValues[key] && delete this[key];
 }
 
+LRUCache.prototype.indexOf = function(key) {
+  // Finds the index of an object in the cachedValues array
+  this.cachedValues.forEach( function(cacheItem, index) {
+    if ( cacheItem.key === key ) return index;
+  }, this);
+
+  // If we made it here, it doesn't exist. Mimic Array.indexOf
+  return -1;
+};
+
 // Private method that
-//  - 1. updates the timestamp on the retrieved cache item
+//  - 1. reorders the keys so that the requested item gets moved to the front.
 //  - 2. updates size of the cache
 //  - 2. Removes the oldest item if necessary
 var triggerUpdateOnKey = function(key) {
-  this.cachedValues[key].retrievedAt = Date.now();
+  var keys_index = this.cachedKeys.indexOf(key);
+  this.cachedKeys.move(keys_index, 0);
 
-  this.size = Object.keys(this.cachedValues).length;
+  this.size = this.cachedKeys.length;
 
   if ( this.size > this.capacity ) {
     // Our cache is overstuffed; we need to remove the oldest item
-    var oldestItem = findOldest.call(this);
-    this.delete(oldestItem);
+    this.delete( this.cachedValues[this.cachedKeys.last] );
+    this.cachedKeys.pop()
   }
   console.log("size is now", this.size);
 }
@@ -96,6 +119,16 @@ var findOldest = function() {
   }
   console.log("oldest is", oldestKey);
   return oldestKey;
+}
+
+
+Array.prototype.move = function(old_index, new_index) {
+  this.splice(new_index, 0, this.splice(old_index, 1)[0]);
+  return this;
+};
+
+Array.prototype.last = function() {
+  return this[this.length-1];
 }
 
 
