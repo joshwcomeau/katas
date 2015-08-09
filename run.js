@@ -1,25 +1,24 @@
-var benchmark   = require('./benchmark');
+var LRUCache = require('./codewars_2/final');
 
-var version1    = require('./codewars_1/version_1');
-var version2    = require('./codewars_1/version_2');
-var footnotes1  = require('./codewars_1/footnotes_1');
-var footnotes2  = require('./codewars_1/footnotes_2');
-var final       = require('./codewars_1/final');
+// Create a store with an initial value
+var store = new LRUCache(3, {a: 5});
 
-// Our pseudorandom number for testing.
-var random_num = '4945647369604558894304153276607440775176393799484894902216270566113395072519779263295624428428157834';
+// Add a few more things
+store.cache('b', 12);
+store.cache('c', 15);
+store.cache('d', 25);
 
-var time_v1 = benchmark.run(version1, random_num, 1000000);
-console.log("V1:   ", time_v1, "ms");
+// Because our capacity is 3, the oldest item should be booted out.
+// That item should be 'a'
+console.log("cache should be 'd, c, b'");
+console.log(store.list())
 
-var time_v2 = benchmark.run(version2, random_num, 1000000);
-console.log("V2:   ", time_v2, "ms   (breaks on sequences that don't contain 9)");
+// Accessing an item moves it to the front
+console.log("b is", store.b);
+console.log("cache should be 'b, d, c'");
+console.log(store.list());
 
-var time_fin = benchmark.run(final, random_num, 1000000);
-console.log("final:", time_fin, "ms");
-
-var time_fn1 = benchmark.run(footnotes1, random_num, 1000000);
-console.log("FN1:  ", time_fn1, "ms   (does not use String.prototype.slice)");
-
-var time_fn2 = benchmark.run(footnotes2, random_num, 1000000);
-console.log("FN2:  ", time_fn2, "ms  (uses all-integer comparisons)");
+// Reducing the capacity should throw away all older items
+store.capacity = 1;
+console.log("Cache should just be 'b'")
+console.log(store.list());
