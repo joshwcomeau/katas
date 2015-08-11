@@ -29,8 +29,12 @@ end
 
 # First thing's first, we need a way of checking if N is an 89'er
 def final_chain_num(n)
-  # Convert it into an array of its digits. Man, I've missed ruby.
-  split_digits = n.to_s.split('').squared.inject(:+)
+  # Figure out what its squared digits add to
+  while n != 1 and n != 89
+    n = n.to_s.split('').squared.inject(:+)
+  end
+
+  return n
 end
 
-puts final_chain_num(44)
+puts final_chain_num(85)
