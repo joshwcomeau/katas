@@ -37,4 +37,18 @@ def final_chain_num(n)
   return n
 end
 
-puts final_chain_num(85)
+def countdown_from(max)
+  num_of_89s = 0
+
+  1.upto(max) do |i|
+    num_of_89s += 1 if final_chain_num(i) == 89
+  end
+
+  num_of_89s
+end
+
+t1 = Time.now
+puts countdown_from(10_000_000)
+t2 = Time.now
+
+puts "Operation took #{t2-t1} seconds."
