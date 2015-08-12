@@ -32,23 +32,29 @@ def final_chain_num(n)
   # Figure out what its squared digits add to
   while n != 1 and n != 89
     n = n.to_s.split('').squared.inject(:+)
+    puts n
   end
 
+  puts "DONE\n\n"
   return n
 end
 
 def countdown_from(max)
   num_of_89s = 0
+  arr = []
 
   1.upto(max) do |i|
-    num_of_89s += 1 if final_chain_num(i) == 89
+    if final_chain_num(i) == 89
+      num_of_89s += 1
+      arr.push(i)
+    end
   end
 
-  num_of_89s
+  print arr
 end
 
 t1 = Time.now
-puts countdown_from(10_000_000)
+puts countdown_from(100)
 t2 = Time.now
 
 puts "Operation took #{t2-t1} seconds."
