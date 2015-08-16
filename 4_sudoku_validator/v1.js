@@ -6,7 +6,10 @@ or not. For fun, I'll be trying to write it in a functional programming style.
 */
 
 function validate(board) {
-  return validate_row(board)
+  // The plan: Check all the rows, rotate the board, check all the rows again.
+  var rotated_board = rotate_board(board);
+  console.log(rotated_board)
+  return validate_row(board) && validate_row(rotated_board);
 }
 
 function validate_row(rows) {
@@ -15,7 +18,7 @@ function validate_row(rows) {
   var row = rows[0];
 
   // In sudoku, a solved row contains all of these characters exactly once.
-  var valid_row  = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  var valid_row  = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   var sorted_row = create_sorted_copy( row );
 
   if ( identical_arrays( sorted_row, valid_row ) ) {
@@ -35,7 +38,21 @@ function validate_row(rows) {
   return false;
 }
 
-
+function rotate_board(board) {
+  // Given board:
+  // [ [1,2,3]
+  //   [1,2,3]
+  //   [1,2,3] ]
+  // This method rotates it ninety degrees clockwise, for:
+  // [ [1,1,1]
+  //   [2,2,2]
+  //   [3,3,3] ]
+  return board[0].map( function(column, index) {
+    return board.map( function(row) {
+      return row[index];
+    });
+  });
+}
 
 function identical_arrays(arr1, arr2) {
   // Does a shallow compare to see if two arrays contain exactly the same values.
@@ -60,10 +77,24 @@ function create_sorted_copy(arr) {
 
 
 var board = [
-  [5,4,2,1,3,6,7,8,9,0],
-  [1,0,2,9,3,8,4,7,5,6],
-  [5,6,4,7,3,8,2,9,1,0]
-]
+[ 1, 3, 2, 5, 7, 9, 4, 6, 8 ],
+[ 4, 9, 8, 2, 6, 1, 3, 7, 5 ],
+[ 7, 5, 6, 3, 8, 4, 2, 1, 9 ],
+[ 6, 4, 3, 1, 5, 8, 7, 9, 2 ],
+[ 5, 2, 1, 7, 9, 3, 8, 4, 6 ],
+[ 9, 8, 7, 4, 2, 6, 5, 3, 1 ],
+[ 2, 1, 4, 9, 3, 5, 6, 8, 7 ],
+[ 3, 6, 5, 8, 1, 7, 9, 2, 4 ],
+[ 8, 7, 9, 6, 4, 2, 1, 5, 3 ]
+];
 
 var solved = validate(board)
 console.log(solved);
+
+var rotated_board = [
+  [1,2,3],
+  [1,2,3],
+  [1,2,3]
+]
+
+console.log(rotate_board(rotated_board));
