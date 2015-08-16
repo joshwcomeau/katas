@@ -52,14 +52,14 @@ end
 def solve(max)
   # First, let's find the max we'll need for our lookup table
   lookup_table = create_lookup_table 570
-  num_of_89s = 0
+  unhappy_number_count = 0
 
   1.upto(max) do |n|
     squared_digits = sum_squares_of_digit(n)
-    num_of_89s += 1 if lookup_table[squared_digits]
+    unhappy_number_count += 1 if lookup_table[squared_digits]
   end
 
-  num_of_89s
+  unhappy_number_count
 end
 
 max = 10_000_000
