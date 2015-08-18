@@ -5,17 +5,77 @@ Simple enough: Write a script that can validate whether a sudoku board is valid
 or not. For fun, I'll be trying to write it in a functional programming style.
 */
 
-function validate(board) {
-  // The plan: Check all the rows, rotate the board, check all the rows again.
-  var row_check = validate_row( board );
-  var col_check = validate_row( rotate_board(board) );
+module.exports = function(board) {
+  // I've abstracted the solution into three steps.
+  //
+  // 1) Check that each row contains 1-9.
+  //
+  // 2) Check that each column contains 1-9.
+  //      this is done by rotating the board by 90 degrees,
+  //      and checking every row again.
+  //
+  // 3) Check each 3x3 region for 1-9
+  //      this is done by extracting each region as an array,
+  //      building a pseudo-board with the 9 arrays,
+  //      and checking every row again.
+
+  var row_check = validate_rows( board );
+  var col_check = validate_rows( rotate_board(board) );
   var reg_check = validate_regions( board );
 
-  console.log(row_check, col_check, reg_check);
-
+  // If all three of those checks pass, we have a solution!
   return row_check && col_check && reg_check;
 }
 
+// Our bread-and-butter solution, this takes a set of rows, validates the first
+// one, and passes the rest into itself recursively.
+// Returns true if ALL the rows passed in contain 1-9.
+function validate_rows(rows) {
+  // We always only care about the first row. We'll recursively call it with
+  // successive rows
+  var row = rows[0];
+
+  // In sudoku, a solved row contains all of these characters exactly once.
+  var valid_row  = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  var sorted_row = create_sorted_copy( row );
+
+  if ( identical_arrays( sorted_row, valid_row ) ) {
+    // This row is valid!
+
+    // If this isn't the last row, we can check the next one.
+    if ( rows.length > 1 ) {
+      var next_rows = rows.slice(1);
+      return validate_rows( next_rows );
+    }
+
+    // If this is the last row, congratulations! Your sudoku is solved.
+    return true;
+  }
+
+  // Oh no! We have a mismatch. This sudoku isn't solved.
+  return false;
+}
+
+// In order to check columns, I 'rotate' the current board and just check its
+// rows. Far from the most efficient way, but I like how intuitive it is.
+function rotate_board(board) {
+  // Given board:
+  // [ [1,2,3]
+  //   [1,2,3]
+  //   [1,2,3] ]
+  // This method rotates it ninety degrees clockwise, for:
+  // [ [1,1,1]
+  //   [2,2,2]
+  //   [3,3,3] ]
+  return board[0].map( function(column, index) {
+    return board.map( function(row) {
+      return row[index];
+    });
+  });
+}
+
+// This checks all the regions on a board. Read the lengthy pluck_region
+// function to learn how.
 function validate_regions(board) {
   // There are 9 regions, of 3x3, within the larger 9x9 board.
   // Each region must contain 1-9, just like each row.
@@ -30,9 +90,13 @@ function validate_regions(board) {
   // We now have what amounts to a 'board' of regions; each region of 9 has
   // been transmuted into a single-dimensional array, and there's 9 of them
   // in a parent array.
-  console.log(pseudo_board)
-  return validate_row(pseudo_board)
+  return validate_rows(pseudo_board)
 }
+
+
+/////////////// HELPER FUNCTIONS ///////////////
+// Our main abstractions out of the way,
+// it's time to see how the sausage is packed.
 
 function pluck_region(board, index) {
   // Given an index from 0 to 8, we need to pluck out the corresponding region:
@@ -124,6 +188,8 @@ function pluck_region(board, index) {
   return flatten(board_cells);
 }
 
+// Turn a multi-dimensional array like [ [1,1,1], [2,2,2], [3,3,3] ]
+// into a single-dimension array like [ 1,1,1,2,2,2,3,3,3 ]
 function flatten(arr) {
   // Reduce is lovely. It's akin to Ruby's inject.
   // For every item in array, perform this function on it; what you return
@@ -143,56 +209,13 @@ function flatten(arr) {
   }, []);
 }
 
+// Simple Array checker. Returns true if obj is an array.
 function is_array(obj) {
-  // Returns true if item is array.
   return Object.prototype.toString.call(obj) === '[object Array]';
 }
 
-function validate_row(rows) {
-  // We always only care about the first row. We'll recursively call it with
-  // successive rows
-  var row = rows[0];
-
-  // In sudoku, a solved row contains all of these characters exactly once.
-  var valid_row  = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  var sorted_row = create_sorted_copy( row );
-
-  if ( identical_arrays( sorted_row, valid_row ) ) {
-    // This row is valid!
-
-    // If this isn't the last row, we can check the next one.
-    if ( rows.length > 1 ) {
-      var next_rows = rows.slice(1);
-      return validate_row( next_rows );
-    }
-
-    // If this is the last row, congratulations! Your sudoku is solved.
-    return true;
-  }
-
-  // Oh no! We have a mismatch. This sudoku isn't solved.
-  return false;
-}
-
-function rotate_board(board) {
-  // Given board:
-  // [ [1,2,3]
-  //   [1,2,3]
-  //   [1,2,3] ]
-  // This method rotates it ninety degrees clockwise, for:
-  // [ [1,1,1]
-  //   [2,2,2]
-  //   [3,3,3] ]
-  return board[0].map( function(column, index) {
-    return board.map( function(row) {
-      return row[index];
-    });
-  });
-}
-
+// Does a shallow compare to see if two arrays contain exactly the same values.
 function identical_arrays(arr1, arr2) {
-  // Does a shallow compare to see if two arrays contain exactly the same values.
-
   // Obviously, if they aren't the same length, they can't be identical.
   if ( arr1.length != arr2.length ) return false;
 
@@ -207,49 +230,7 @@ function identical_arrays(arr1, arr2) {
   return true;
 }
 
+// Exactly what it sounds like :)
 function create_sorted_copy(arr) {
   return arr.slice().sort();
 }
-
-
-var bad_board = [
-[ 9, 3, 2, 5, 7, 1, 4, 6, 8 ],
-[ 4, 1, 8, 2, 6, 9, 3, 7, 5 ],
-[ 7, 5, 6, 3, 8, 4, 2, 9, 1 ],
-[ 6, 4, 3, 9, 5, 8, 7, 1, 2 ],
-[ 5, 2, 1, 7, 9, 3, 8, 4, 6 ],
-[ 1, 8, 7, 4, 2, 6, 5, 3, 9 ],
-[ 2, 9, 4, 1, 3, 5, 6, 8, 7 ],
-[ 3, 6, 5, 8, 1, 7, 9, 2, 4 ],
-[ 8, 7, 9, 6, 4, 2, 1, 5, 3 ]
-];
-
-var good_board = [
-[5, 3, 4, 6, 7, 8, 9, 1, 2],
-[6, 7, 2, 1, 9, 5, 3, 4, 8],
-[1, 9, 8, 3, 4, 2, 5, 6, 7],
-[8, 5, 9, 7, 6, 1, 4, 2, 3],
-[4, 2, 6, 8, 5, 3, 7, 9, 1],
-[7, 1, 3, 9, 2, 4, 8, 5, 6],
-[9, 6, 1, 5, 3, 7, 2, 8, 4],
-[2, 8, 7, 4, 1, 9, 6, 3, 5],
-[3, 4, 5, 2, 8, 6, 1, 7, 9]
-];
-
-var test_board = [
-[1,1,1,2,2,2,3,3,3],
-[1,1,1,2,2,2,3,3,3],
-[1,1,1,2,2,2,3,3,3],
-[4,4,4,5,5,5,6,6,6],
-[4,4,4,5,5,5,6,6,6],
-[4,4,4,5,5,5,6,6,6],
-[7,7,7,8,8,8,9,9,9],
-[7,7,7,8,8,8,9,9,9],
-[7,7,7,8,8,8,9,9,9],
-]
-
-
-console.log("Bad board:", validate(bad_board) );
-console.log("Good board:", validate(good_board) );
-
-console.log("Rotated:", validate_regions(test_board))
