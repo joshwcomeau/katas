@@ -21,7 +21,8 @@ module.exports = function(board) {
 
   var row_check = validate_rows( board );
   var col_check = validate_rows( rotate_board(board) );
-  var reg_check = validate_regions( board );
+  var reg_check = validate_rows( regionize_board(board) );
+
 
   // If all three of those checks pass, we have a solution!
   return row_check && col_check && reg_check;
@@ -76,21 +77,15 @@ function rotate_board(board) {
 
 // This checks all the regions on a board. Read the lengthy pluck_region
 // function to learn how.
-function validate_regions(board) {
+function regionize_board(board) {
   // There are 9 regions, of 3x3, within the larger 9x9 board.
   // Each region must contain 1-9, just like each row.
   // In other words, all we really want to do is pluck those 9 values out
   // and treat them like a row. Why don't we create a new 'board' by rearranging
   // each region into a row, and then checking each row?
-  var pseudo_board = board.map( function(row, index) {
-    // We don't care about the row, we just need the index
+  return board.map( function(row, index) {
     return pluck_region(board, index);
   });
-
-  // We now have what amounts to a 'board' of regions; each region of 9 has
-  // been transmuted into a single-dimensional array, and there's 9 of them
-  // in a parent array.
-  return validate_rows(pseudo_board)
 }
 
 
