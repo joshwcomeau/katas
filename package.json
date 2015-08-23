@@ -1,0 +1,23 @@
+{
+  "name": "Katas",
+  "version": "1.0.0",
+  "description": "Started as a way to exercise my brain and have fun, I'll be solving a programming challenge every week for 10 weeks, starting on August 1. This process is documented on [my Medium blog](https://medium.com/@joshuawcomeau).",
+  "main": "run.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshwcomeau/katas.git"
+  },
+  "author": "Joshua Comeau",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/joshwcomeau/katas/issues"
+  },
+  "homepage": "https://github.com/joshwcomeau/katas#readme",
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "mocha": "^2.2.5"
+  }
+}
