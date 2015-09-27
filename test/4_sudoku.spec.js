@@ -2,7 +2,7 @@ var expect = require('chai').expect;
 
 var validate = require('../4_sudoku_validator/final');
 
-xdescribe('Sudoku Validator', function() {
+describe('Sudoku Validator', function() {
   describe('invalid board', function() {
     it('fails on a board with duplicate numbers in the same row', function() {
       var board = [
