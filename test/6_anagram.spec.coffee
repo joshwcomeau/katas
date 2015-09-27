@@ -26,7 +26,21 @@ describe 'Anagram', ->
     it 'finds the third word, `tram`', ->
       expect( words[2] ).to.equal 'tram'
 
+
+  describe 'remove_word_from_letters', ->
+    it 'succeeds when one is a superset', ->
+      expect( anagram.remove_word_from_letters('carman', 'car') ).to.equal 'man'
     
+    it 'succeeds when the order is scrambled', ->
+      expect( anagram.remove_word_from_letters('tracks', 'src') ).to.equal 'tak'
+
+    it 'does not remove duplicates', ->
+      expect( anagram.remove_word_from_letters('boom', 'ob') ).to.equal 'om'
+  
+    it 'does remove duplicates when specified', ->
+      expect( anagram.remove_word_from_letters('aaaah', 'aaa') ).to.equal 'ah'
+  
+  
   describe 'word_contains_letters', ->
     context 'succeeds when it', ->
       it 'is a superset of the letters', ->

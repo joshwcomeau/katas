@@ -19,13 +19,13 @@ module.exports =
   # can be created with a supplied set of letters.
   #  > PARAMETERS
   #    - letters     (string)
-  #    - dictionary  (array)
+  #    - dictionary  ([string])
   #  > RETURNS
   #    [string] (a subset of 'dictionay')
-  find_available_words: (parent_word, dictionary) ->
+  find_available_words: (letters, dictionary) ->
     self = @
     return dictionary.reduce (found_words, current_word) ->
-      if self.word_contains_letters parent_word, current_word
+      if self.word_contains_letters letters, current_word
         found_words.push current_word
       
       return found_words
@@ -51,6 +51,41 @@ module.exports =
       return true
     
     
+  # Take the difference of two sets of strings. For example, when given
+  # 'boom' and 'ob', return 'om'.
+  #  > PARAMETERS
+  #    - word     (string)
+  #    - letters  (string)
+  #  > RETURNS
+  #    [string]
+  remove_word_from_letters: (word, letters) ->
+    remainder = word
+    
+    letters.split('').forEach (letter) ->
+      remainder = remainder.replace(letter, '')
+    
+    return remainder
+    
+  # When given our original set of letters, and a bunch of words that can be
+  # made from those letters, return all valid anagrams.
+  #  > PARAMETERS
+  #    - letters          (string)
+  #    - available_words  ([string])
+  #  > RETURNS
+  #    [string]
+  find_valid_anagrams: (letters, available_words) ->
+    # This is tricky. Example:
+    # LETTERS: Racecar
+    # WORDS:   'race', 'car', 'care', 'arc', 'arr'
+    # We can pick the first word, 'race', in which case we're left with 'car'.
+    # Then, we need to figure out if 'car' can be anagrammed any further.
+    # 'race car' is one solution, but so is 'race arc'
+    self = @
+    valid_anagrams = []
+    
+    available_words.forEach (word) ->
+      word_remainder = self.remove_word_from_letters word, letters
+    
   solve: (letters, dictionary_filename) ->
     # Solution attempt 1:
     # Find all the dictionary words that can be made out of the supplied letters.
@@ -58,4 +93,6 @@ module.exports =
     # available letters once.
     dictionary = @load_dictionary dictionary_filename
     available_words = @find_available_words letters, dictionary
+    
+    return @find_valid_anagrams letters, available_words
 
