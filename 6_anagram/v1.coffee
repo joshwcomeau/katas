@@ -22,10 +22,10 @@ module.exports =
   #    - dictionary  (array)
   #  > RETURNS
   #    [string] (a subset of 'dictionay')
-  find_available_words: (letters, dictionary) ->
+  find_available_words: (parent_word, dictionary) ->
     self = @
     return dictionary.reduce (found_words, current_word) ->
-      if self.word_contains_letters current_word, letters
+      if self.word_contains_letters parent_word, current_word
         found_words.push current_word
       
       return found_words
@@ -40,20 +40,16 @@ module.exports =
   #    boolean
   word_contains_letters: (word, letters) ->
     remaining_pool = word
-    valid = true
     
-    letters.split('').forEach (letter) ->
-      if remaining_pool.indexOf(letter) == -1
-        # If this letter isn't in our set of remaining letters,
-        # it means this word does not contain this set of letters.
-        valid = false
-      else
-        # We found it. Strike it out of the pool of remaining letters and 
-        # move on.
-        remaining_pool = remaining_pool.replace letter, ''
-      return
+    return letters.split('').every (letter) ->
+      # If this letter isn't in our set of remaining letters,
+      # it means this word does not contain this set of letters.
+      if remaining_pool.indexOf(letter) == -1 then return false
+
+      # Otherwise, it means we have a match and can continue.
+      remaining_pool = remaining_pool.replace letter, ''
+      return true
     
-    return valid
     
   solve: (letters, dictionary_filename) ->
     # Solution attempt 1:

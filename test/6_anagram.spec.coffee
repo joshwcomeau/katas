@@ -3,6 +3,30 @@ expect = require('chai').expect
 anagram = require '../6_anagram/v1'
 
 describe 'Anagram', ->  
+  describe 'find_available_words', ->
+    dictionary = ['alpine', 'ladygaga', 'mart', 'tram', 'harro']
+    letters    = 'parliament'
+    words      = []
+    
+    before ->
+      words = anagram.find_available_words letters, dictionary
+    
+    it 'returns an array', ->
+      expect( words ).to.be.an 'array'
+    
+    it 'finds 3 words out of 5 that are contained in `parliament`', ->
+      expect( words.length ).to.equal 3
+    
+    it 'finds the first word, `alpine`', ->
+      expect( words[0] ).to.equal 'alpine'
+    
+    it 'finds the second word, `mart`', ->
+      expect( words[1] ).to.equal 'mart'
+    
+    it 'finds the third word, `tram`', ->
+      expect( words[2] ).to.equal 'tram'
+
+    
   describe 'word_contains_letters', ->
     context 'succeeds when it', ->
       it 'is a superset of the letters', ->
