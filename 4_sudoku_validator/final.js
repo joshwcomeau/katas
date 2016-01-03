@@ -16,7 +16,7 @@ function validate_rows(rows) {
   var sorted_row = create_sorted_copy( row );
 
   if ( identical_arrays( sorted_row, valid_row ) ) {
-    if ( rows.length > 1 ) return validate_rows( rows.slice(1); );
+    if ( rows.length > 1 ) return validate_rows( rows.slice(1) );
     return true;
   }
 }
