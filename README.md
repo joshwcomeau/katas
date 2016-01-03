@@ -23,5 +23,11 @@ From Project Euler, this problem is much more math-focused, and asks you to calc
 --------
 
 ###Problem 4: Sudoku Validation
-From Project Euler, this problem is much more math-focused, and asks you to calculate how many 'unhappy' numbers there are below 10 million.
+From CodeWars, this is a simple problem: Write a script that will validate a Sudoku, passed in as a 2D array of numbers. It takes some inspiration from functional programming, in the form of avoiding side effects, not mutating data, and using short, single-purpose functions.
+[Problem](http://www.codewars.com/kata/did-i-finish-my-sudoku/) | [My Solution](https://github.com/joshwcomeau/katas/tree/master/4_sudoku_validator) | [Blog Post](https://medium.com/@joshuawcomeau/sudoku-validation-2eb4e7d2a6ca)
+
+--------
+
+###Problem 5: Dependency Injection
+A homegrown mini framework for handling dependencies with dependency injection. Turns out it's pretty straightforward!
 [Problem](http://www.codewars.com/kata/did-i-finish-my-sudoku/) | [My Solution](https://github.com/joshwcomeau/katas/tree/master/4_sudoku_validator) | [Blog Post](https://medium.com/@joshuawcomeau/sudoku-validation-2eb4e7d2a6ca)

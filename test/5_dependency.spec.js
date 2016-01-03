@@ -10,16 +10,13 @@ describe('Dependency Injector', function() {
       'dep3': function () {return 'this is dep3';},
       'dep4': function () {return 'this is dep4';}
     };
-      
+
     var di = new DI(deps);
 
     var yes = di.inject( function(dep3, dep1, dep2) {
       return [dep1(), dep2(), dep3()].join(' -> ');
     });
-    
-    console.log("YES", yes());
-    
-    expect(yes()).to.equal('this is dep1 -> this is dep2 -> this is dep3');
 
+    expect(yes()).to.equal('this is dep1 -> this is dep2 -> this is dep3');
   });
 });
