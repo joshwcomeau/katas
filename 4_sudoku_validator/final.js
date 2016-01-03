@@ -5,8 +5,7 @@ module.exports = function(board) {
   var row_check = validate_rows( board );
   var col_check = validate_rows( rotate_board(board) );
   var reg_check = validate_rows( regionize_board(board) );
-
-  return row_check && col_check && reg_check;
+  return !!row_check && !!col_check && !!reg_check;
 }
 
 function validate_rows(rows) {
